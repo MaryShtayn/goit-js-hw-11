@@ -53,8 +53,7 @@
 //         return;
 //       }
 //       createMarkup(data.hits);
-//       btnLoad.hidden = false;
-
+//
 //       // totalPages = Math.ceil(total / 40);
 
 //       // if (page < totalHits) {

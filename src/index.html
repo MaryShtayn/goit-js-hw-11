@@ -8,17 +8,19 @@
     <script type="module" src="./index.js"></script>
   </head>
   <body>
-    <form class="search-form" id="search-form">
-      <input
-        type="text"
-        name="searchQuery"
-        autocomplete="off"
-        placeholder="Search images..."
-      />
-      <button type="submit">Search</button>
-    </form>
-    <div class="gallery js-gallery">
-      <button hidden class="load-more">Load more...</button>
+    <div class="container">
+      <form class="search-form" id="search-form">
+        <input
+          class="input__style"
+          type="text"
+          name="searchQuery"
+          autocomplete="off"
+          placeholder="Find pictures by keyword..."
+        />
+        <button class="btn__style" type="submit">Search</button>
+      </form>
+      <div class="gallery js-gallery"></div>
+      <button class="load-more btn__style is_hidden">Load more...</button>
     </div>
   </body>
 </html>
