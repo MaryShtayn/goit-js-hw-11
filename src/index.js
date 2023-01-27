@@ -1,5 +1,4 @@
 import Notiflix from 'notiflix';
-import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import getPhotos from './js/getPhotos';
@@ -23,19 +22,30 @@ async function onSubmit(evt) {
     searchQuery = evt.currentTarget.elements.searchQuery.value;
     evt.target.reset();
 
-    if (!searchQuery) {
+    if (searchQuery === '') {
       Notiflix.Notify.failure('The field must be filled');
       return;
     }
 
     const data = await getPhotos();
     if (!data.hits.length) {
+      loadBtn.classList.add('is-hidden');
+
+      gallery.innerHTML = '';
+
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
+    } else {
+      gallery.innerHTML = '';
+      Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
     }
+
     createMarkup(data.hits);
+
+    windowUpScrollTo();
+
     loadBtn.classList.remove('is_hidden');
   } catch (err) {
     Notiflix.Notify.failure('Sorry, something went wrong');
@@ -65,7 +75,8 @@ function createMarkup(arr) {
     )
     .join('');
 
-  gallery.innerHTML = markup;
+  gallery.insertAdjacentHTML('beforeend', markup);
+
   function onOpenModal(event) {
     event.preventDefault();
 
@@ -86,14 +97,35 @@ async function onLoad() {
     page += 1;
     const data = await getPhotos(page);
     if (page * perPage >= data.totalHits) {
-      Notiflix.Notify.failure(
+      Notiflix.Notify.info(
         "We're sorry, but you've reached the end of search results."
       );
+
       loadBtn.classList.add('is_hidden');
     }
+
     createMarkup(data.hits);
+    windowDownScrollBy();
+
     gallery.refresh();
   } catch (err) {
     console.log('Error');
   }
+}
+
+function windowUpScrollTo() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+}
+
+function windowDownScrollBy() {
+  const { height: cardHeight } =
+    gallery.firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }

@@ -48,7 +48,7 @@ img {
   &:hover,
   &:focus {
     border: 2px solid gray;
-
+    font-weight: lighter;
     box-shadow: var(--btn-hover);
   }
 }
@@ -60,6 +60,7 @@ img {
   border: 1 solid;
   border-radius: 4px;
   &:hover {
+    border: 2px solid gray;
     transform: translateY(-1px);
     box-shadow: var(--btn-hover);
     cursor: pointer;
