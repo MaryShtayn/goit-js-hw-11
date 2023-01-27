@@ -1,4 +1,5 @@
 import Notiflix from 'notiflix';
+import simpleLightbox from 'simplelightbox';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import getPhotos from './js/getPhotos';
@@ -11,6 +12,10 @@ export let page = 1;
 export let searchQuery = '';
 export let totalHits = 0;
 export const perPage = 40;
+
+const lightbox = new SimpleLightbox('.gallery__link', {
+  captionDelay: 250,
+});
 
 form.addEventListener('submit', onSubmit);
 loadBtn.addEventListener('click', onLoad);
@@ -45,6 +50,7 @@ async function onSubmit(evt) {
     createMarkup(data.hits);
 
     windowUpScrollTo();
+    lightbox.refresh();
 
     loadBtn.classList.remove('is_hidden');
   } catch (err) {
@@ -76,20 +82,6 @@ function createMarkup(arr) {
     .join('');
 
   gallery.insertAdjacentHTML('beforeend', markup);
-
-  function onOpenModal(event) {
-    event.preventDefault();
-
-    if (event.target.nodeName !== 'IMG') {
-      return;
-    }
-  }
-  const lightbox = new SimpleLightbox('.gallery__link', {
-    captionDelay: 250,
-  });
-  lightbox.on('show.simplelightbox', function () {
-    gallery.addEventListener('click', onOpenModal);
-  });
 }
 
 async function onLoad() {
@@ -106,6 +98,8 @@ async function onLoad() {
 
     createMarkup(data.hits);
     windowDownScrollBy();
+
+    lightbox.refresh();
 
     gallery.refresh();
   } catch (err) {
