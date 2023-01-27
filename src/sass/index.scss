@@ -77,7 +77,7 @@ img {
   transition: transform ease 0.5s, box-shadow ease 0.5s;
   border-radius: 4px;
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: var(--image-box-hover);
     cursor: pointer;
   }
