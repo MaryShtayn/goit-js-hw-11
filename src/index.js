@@ -2,14 +2,16 @@ import Notiflix from 'notiflix';
 import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import getPhotos from './js/getPhotos';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.js-gallery');
 const loadBtn = document.querySelector('.load-more');
 
-let page = 1;
-let value = '';
-let totalHits = 0;
+export let page = 1;
+export let searchQuery = '';
+export let totalHits = 0;
+export const perPage = 40;
 
 form.addEventListener('submit', onSubmit);
 loadBtn.addEventListener('click', onLoad);
@@ -17,16 +19,17 @@ loadBtn.addEventListener('click', onLoad);
 async function onSubmit(evt) {
   try {
     evt.preventDefault();
-    const searchQuery = evt.currentTarget.elements.searchQuery.value;
+    page = 1;
+    searchQuery = evt.currentTarget.elements.searchQuery.value;
     evt.target.reset();
 
-    if (searchQuery === '') {
+    if (!searchQuery) {
       Notiflix.Notify.failure('The field must be filled');
       return;
     }
 
     const data = await getPhotos();
-    if (data.hits.length === 0) {
+    if (!data.hits.length) {
       Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -37,21 +40,6 @@ async function onSubmit(evt) {
   } catch (err) {
     Notiflix.Notify.failure('Sorry, something went wrong');
   }
-}
-
-async function getPhotos(page = 1, value = searchQuery) {
-  const BASE_URL = 'https://pixabay.com/api/';
-  const KEY_API = '32999869-250accc55f8619ccb56097a0b';
-  const searchParam = new URLSearchParams({
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: true,
-    per_page: 40,
-  });
-  const response = await axios.get(
-    `${BASE_URL}?key=${KEY_API}&q=${value}&page=${page}&${searchParam}`
-  );
-  return response.data;
 }
 
 function createMarkup(arr) {
@@ -96,18 +84,15 @@ function createMarkup(arr) {
 async function onLoad() {
   try {
     page += 1;
-    const data = await getPhotos();
-    if (per_page * page >= data.totalHits) {
+    const data = await getPhotos(page);
+    if (page * perPage >= data.totalHits) {
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results."
       );
-      return;
+      loadBtn.classList.add('is_hidden');
     }
     createMarkup(data.hits);
     gallery.refresh();
-    if (data.hits === data.totalHits) {
-      loadBtn.classList.add('is_hidden');
-    }
   } catch (err) {
     console.log('Error');
   }
